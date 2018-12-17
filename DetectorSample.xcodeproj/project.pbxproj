@@ -14,6 +14,8 @@
 		66252EBD21C38E1F00533499 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66252EBC21C38E1F00533499 /* Assets.xcassets */; };
 		66252EC021C38E1F00533499 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 66252EBE21C38E1F00533499 /* LaunchScreen.storyboard */; };
 		66252EC321C38E1F00533499 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66252EC221C38E1F00533499 /* main.m */; };
+		66F2F77421C7A8FD00487797 /* img_one.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 66F2F77321C7A8FD00487797 /* img_one.jpg */; };
+		66F2F77621C7AB1D00487797 /* img_two.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 66F2F77521C7AB1D00487797 /* img_two.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,8 @@
 		66252EC121C38E1F00533499 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		66252EC221C38E1F00533499 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66252ECA21C3A8FC00533499 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		66F2F77321C7A8FD00487797 /* img_one.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img_one.jpg; sourceTree = "<group>"; };
+		66F2F77521C7AB1D00487797 /* img_two.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img_two.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,7 @@
 		66252EAF21C38E1F00533499 /* DetectorSample */ = {
 			isa = PBXGroup;
 			children = (
+				66F2F77221C7A8D500487797 /* image */,
 				66252EB021C38E1F00533499 /* AppDelegate.h */,
 				66252EB121C38E1F00533499 /* AppDelegate.m */,
 				66252EB321C38E1F00533499 /* ViewController.h */,
@@ -82,6 +87,15 @@
 				66252ECA21C3A8FC00533499 /* CFNetwork.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		66F2F77221C7A8D500487797 /* image */ = {
+			isa = PBXGroup;
+			children = (
+				66F2F77521C7AB1D00487797 /* img_two.jpg */,
+				66F2F77321C7A8FD00487797 /* img_one.jpg */,
+			);
+			path = image;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -142,9 +156,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66F2F77421C7A8FD00487797 /* img_one.jpg in Resources */,
 				66252EC021C38E1F00533499 /* LaunchScreen.storyboard in Resources */,
 				66252EBD21C38E1F00533499 /* Assets.xcassets in Resources */,
 				66252EB821C38E1F00533499 /* Main.storyboard in Resources */,
+				66F2F77621C7AB1D00487797 /* img_two.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,12 @@
 
 #import "ViewController.h"
 
+#define screenWidth [UIScreen mainScreen].bounds.size.width
+#define screenHeight [UIScreen mainScreen].bounds.size.height
+
 @interface ViewController () <NSURLSessionDataDelegate>{
+    UIImageView *imageView;
+    
     int regexNext[40];
     int splitNext[4];
     
@@ -30,12 +35,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(50, 50, 200, 200)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(50, 50, 100, 80)];
     label.text = @"post request";
     [self.view addSubview:label];
     label.userInteractionEnabled=YES;
     UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
     [label addGestureRecognizer:recognizer];
+    
+    imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 200, screenWidth, screenWidth * 9 / 16)];
+    UIImage *image = [[UIImage alloc] init];
+    image = [UIImage imageNamed:@"img_two.jpg"];
+    imageView.image = image;
+//    imageView.contentMode =  UIViewContentModeCenter;
+    [self.view addSubview:imageView];
 }
 
 - (void) viewWillAppear:(BOOL)animated{
@@ -209,6 +221,12 @@
                             
                             NSData *imageData =[self.mutableData subdataWithRange:NSMakeRange(n + splitLen, findIndex - n - splitLen)];
                             NSLog(@"image length: %lu", [imageData length]);
+                            
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                UIImage *image = [UIImage imageWithData:imageData];
+                                imageView.image = image;
+                                
+                            });
                             
                         }
                         
