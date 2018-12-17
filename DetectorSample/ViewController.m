@@ -12,18 +12,16 @@
     int regexNext[40];
     int splitNext[4];
     
+    int regexLen;
+    int splitLen;
+    
+    int lastIndex;
 }
 
 //缓存接受到的数据
 @property (nonatomic, strong) NSMutableData* mutableData;
-
-@property (nonatomic, assign) Byte* regexByte;
-@property (nonatomic, assign) int regexLen;
-
-@property (nonatomic, assign) Byte* splitByte;
-@property (nonatomic, assign) int splitLen;
-
-@property (nonatomic, assign) int lastIndex;
+@property (nonatomic, strong) NSData* regexNSData;
+@property (nonatomic, strong) NSData* splitNSData;
 
 @end
 
@@ -43,19 +41,19 @@
 - (void) viewWillAppear:(BOOL)animated{
     // save data
     self.mutableData = [[NSMutableData alloc] init];
-    self.lastIndex = 0;
+    lastIndex = 0;
     
     // boundary regex
     NSString* regex = @"------WebKitFormBoundaryIZDrYHwuf2VJdpHw";
-    NSData *regexNSData = [regex dataUsingEncoding: NSUTF8StringEncoding];
-    self.regexLen = (int) [regexNSData length];
-    self.regexByte = (Byte*)[regexNSData bytes];
+    self.regexNSData = [regex dataUsingEncoding: NSUTF8StringEncoding];
+    regexLen = (int) [self.regexNSData length];
+    Byte* regexByte = (Byte*)[self.regexNSData bytes];
     //transform KMP next
     regexNext[0] = -1;
     int k = -1;
     int j = 0;
-    while (j < self.regexLen - 1) {
-        if (k == -1 || self.regexByte[j] == self.regexByte[k]) {
+    while (j < regexLen - 1) {
+        if (k == -1 || regexByte[j] == regexByte[k]) {
             j++;
             k++;
             regexNext[j] = k;
@@ -65,16 +63,16 @@
     }
     
     // split regex
-    NSString* splitRegex = @"\r\n\r\n";
-    NSData *splitNSData = [splitRegex dataUsingEncoding: NSUTF8StringEncoding];
-    self.splitLen = (int) [splitNSData length];
-    self.splitByte = (Byte*)[splitNSData bytes];
+    NSString* split = @"\r\n\r\n";
+    self.splitNSData = [split dataUsingEncoding: NSUTF8StringEncoding];
+    splitLen = (int) [self.splitNSData length];
+    Byte* splitByte = (Byte*)[self.splitNSData bytes];
     //transform KMP next
     splitNext[0] = -1;
     int k1 = -1;
     int j1 = 0;
-    while (j1 < self.splitLen - 1) {
-        if (k1 == -1 || self.splitByte[j1] == self.splitByte[k1]) {
+    while (j1 < splitLen - 1) {
+        if (k1 == -1 || splitByte[j1] == splitByte[k1]) {
             j1++;
             k1++;
             splitNext[j1] = k1;
@@ -83,20 +81,15 @@
         }
     }
     
-    NSLog(@"viewDidLoad：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
-    
+//    NSLog(@"viewDidLoad：regex:%s  regex[0]:%d", regexByte, regexByte[0]);
 }
 
 -(void) labelTouchUpInside:(UITapGestureRecognizer *)recognizer{
-    NSLog(@"labelTouchUpInside：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
-    
-//    [self postClick];
+    [self postClick];
 }
 
 /* POST 请求 */
 -(void)postClick{
-    NSLog(@"postClick  regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
-    
     // http://116.204.67.11:17001/stream/read
     // tid=COWN-3B1-UY-4WS&chid=1&from=2018-12-07 16:31:15&to=2018-12-07 16:31:35
     NSString* body = [@"from=2018-12-07 16:31:15&to=2018-12-07 16:31:35" stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"?!@#$^%*+,:;'\"`<>()[]{}/\\| "] invertedSet]];
@@ -140,8 +133,6 @@
     //在该方法中可以得到响应头信息，即response
     NSLog(@"didReceiveResponse 响应头： %@", response);
     
-    NSLog(@"didReceiveData：split:%s  regex:%d", self.splitByte, self.regexByte[0]);
-    
     //注意：需要使用completionHandler回调告诉系统应该如何处理服务器返回的数据
     //默认是取消的
     /*
@@ -156,13 +147,17 @@
 
 //2.接收到服务器返回数据的时候会调用该方法，如果数据较大那么该方法可能会调用多次
 -(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data{
-    NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"didReceiveData：%@", str);
+//    NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//    NSLog(@"didReceiveData：%@", str);
 
 //    Byte *dataByte = (Byte *)[data bytes];
 //    NSLog(@"didReceiveData：%hhu", dataByte[0]);
     
 //    NSData* nsData = [[NSData alloc] initWithBytes:dataByte length:data.length];
+    
+    //0.
+    Byte* regexByte = (Byte*)[self.regexNSData bytes];
+    Byte* splitByte = (Byte*)[self.splitNSData bytes];
     
     //1. add to mutable date
     [self.mutableData appendData:data];
@@ -171,22 +166,19 @@
     Byte *dataByte = (Byte *)[self.mutableData bytes];
     int position = (int)[self.mutableData length] - 1;
     
-    NSLog(@"当前数据长度： %d", position);
+//    NSLog(@"当前数据长度： %d", position);
+//    NSLog(@"didReceiveData：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
     
-    NSLog(@"didReceiveData：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
-    
-    if (position > self.regexLen) {
+    if (position > regexLen) {
         int findIndex = -1;
-        int j = self.lastIndex;
+        int j = lastIndex;
         int s = 0;
         while(j < position){
-//            NSLog(@"%s  self.regexByte[0]:%d", self.regexByte, self.regexByte[0]);
-            
-            if (s == -1 || dataByte[j] == self.regexByte[s]) {
+            if (s == -1 || dataByte[j] == regexByte[s]) {
                 j ++;
                 s ++;
-                if (s >= self.regexLen){
-                    findIndex = j - self.regexLen;
+                if (s >= regexLen){
+                    findIndex = j - regexLen;
                     break;
                 }
             }else{
@@ -199,23 +191,23 @@
         if (findIndex != -1) {
             //find part data
 
-            if (findIndex >= self.splitLen) {
+            if (findIndex >= splitLen) {
                 int jj = 0;
                 int ss = 0;
                 
                 while (jj < findIndex) {
-                    if (ss == -1 || dataByte[jj] == self.splitByte[ss]) {
+                    if (ss == -1 || dataByte[jj] == splitByte[ss]) {
                         jj ++;
                         ss ++;
                         
-                        if (ss >= self.splitLen) {
-                            int n = jj - self.splitLen;
+                        if (ss >= splitLen) {
+                            int n = jj - splitLen;
                             
                             NSData *headerData =[self.mutableData subdataWithRange:NSMakeRange(0, n)];
                             NSString *header = [[NSString alloc] initWithData:headerData encoding:NSUTF8StringEncoding];
                             NSLog(@"header: %@", header);
                             
-                            NSData *imageData =[self.mutableData subdataWithRange:NSMakeRange(n + self.splitLen, findIndex - n - self.splitLen)];
+                            NSData *imageData =[self.mutableData subdataWithRange:NSMakeRange(n + splitLen, findIndex - n - splitLen)];
                             NSLog(@"image length: %lu", [imageData length]);
                             
                         }
@@ -227,12 +219,12 @@
             }
             
             //reset
-            self.lastIndex = 0;
+            lastIndex = 0;
             
-            [self.mutableData replaceBytesInRange:NSMakeRange(0, findIndex + self.regexLen) withBytes:NULL length:0];//删除索引0到索引50的数据
+            [self.mutableData replaceBytesInRange:NSMakeRange(0, findIndex + regexLen) withBytes:NULL length:0];//删除索引0到索引50的数据
             
         }else{
-            self.lastIndex = position - self.regexLen -1;
+            lastIndex = position - regexLen -1;
         }
     }
 
