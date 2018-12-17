@@ -8,33 +8,95 @@
 
 #import "ViewController.h"
 
-@interface ViewController () <NSURLSessionDataDelegate>
+@interface ViewController () <NSURLSessionDataDelegate>{
+    int regexNext[40];
+    int splitNext[4];
+    
+}
+
+//缓存接受到的数据
+@property (nonatomic, strong) NSMutableData* mutableData;
+
+@property (nonatomic, assign) Byte* regexByte;
+@property (nonatomic, assign) int regexLen;
+
+@property (nonatomic, assign) Byte* splitByte;
+@property (nonatomic, assign) int splitLen;
+
+@property (nonatomic, assign) int lastIndex;
 
 @end
 
 @implementation ViewController
 
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(50, 50, 200, 200)];
     label.text = @"post request";
     [self.view addSubview:label];
-    
     label.userInteractionEnabled=YES;
-    UITapGestureRecognizer *labelTapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
-    [label addGestureRecognizer:labelTapGestureRecognizer];
+    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(labelTouchUpInside:)];
+    [label addGestureRecognizer:recognizer];
+}
+
+- (void) viewWillAppear:(BOOL)animated{
+    // save data
+    self.mutableData = [[NSMutableData alloc] init];
+    self.lastIndex = 0;
+    
+    // boundary regex
+    NSString* regex = @"------WebKitFormBoundaryIZDrYHwuf2VJdpHw";
+    NSData *regexNSData = [regex dataUsingEncoding: NSUTF8StringEncoding];
+    self.regexLen = (int) [regexNSData length];
+    self.regexByte = (Byte*)[regexNSData bytes];
+    //transform KMP next
+    regexNext[0] = -1;
+    int k = -1;
+    int j = 0;
+    while (j < self.regexLen - 1) {
+        if (k == -1 || self.regexByte[j] == self.regexByte[k]) {
+            j++;
+            k++;
+            regexNext[j] = k;
+        }else{
+            k = regexNext[k];
+        }
+    }
+    
+    // split regex
+    NSString* splitRegex = @"\r\n\r\n";
+    NSData *splitNSData = [splitRegex dataUsingEncoding: NSUTF8StringEncoding];
+    self.splitLen = (int) [splitNSData length];
+    self.splitByte = (Byte*)[splitNSData bytes];
+    //transform KMP next
+    splitNext[0] = -1;
+    int k1 = -1;
+    int j1 = 0;
+    while (j1 < self.splitLen - 1) {
+        if (k1 == -1 || self.splitByte[j1] == self.splitByte[k1]) {
+            j1++;
+            k1++;
+            splitNext[j1] = k1;
+        }else{
+            k1 = splitNext[k1];
+        }
+    }
+    
+    NSLog(@"viewDidLoad：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
     
 }
 
 -(void) labelTouchUpInside:(UITapGestureRecognizer *)recognizer{
-    [self postClick];
+    NSLog(@"labelTouchUpInside：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
+    
+//    [self postClick];
 }
 
 /* POST 请求 */
 -(void)postClick{
+    NSLog(@"postClick  regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
+    
     // http://116.204.67.11:17001/stream/read
     // tid=COWN-3B1-UY-4WS&chid=1&from=2018-12-07 16:31:15&to=2018-12-07 16:31:35
     NSString* body = [@"from=2018-12-07 16:31:15&to=2018-12-07 16:31:35" stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"?!@#$^%*+,:;'\"`<>()[]{}/\\| "] invertedSet]];
@@ -78,6 +140,8 @@
     //在该方法中可以得到响应头信息，即response
     NSLog(@"didReceiveResponse 响应头： %@", response);
     
+    NSLog(@"didReceiveData：split:%s  regex:%d", self.splitByte, self.regexByte[0]);
+    
     //注意：需要使用completionHandler回调告诉系统应该如何处理服务器返回的数据
     //默认是取消的
     /*
@@ -95,15 +159,88 @@
     NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"didReceiveData：%@", str);
 
-    Byte *dataByte = (Byte *)[data bytes];
+//    Byte *dataByte = (Byte *)[data bytes];
+//    NSLog(@"didReceiveData：%hhu", dataByte[0]);
     
+//    NSData* nsData = [[NSData alloc] initWithBytes:dataByte length:data.length];
     
+    //1. add to mutable date
+    [self.mutableData appendData:data];
     
+    //2. find regex
+    Byte *dataByte = (Byte *)[self.mutableData bytes];
+    int position = (int)[self.mutableData length] - 1;
+    
+    NSLog(@"当前数据长度： %d", position);
+    
+    NSLog(@"didReceiveData：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
+    
+    if (position > self.regexLen) {
+        int findIndex = -1;
+        int j = self.lastIndex;
+        int s = 0;
+        while(j < position){
+//            NSLog(@"%s  self.regexByte[0]:%d", self.regexByte, self.regexByte[0]);
+            
+            if (s == -1 || dataByte[j] == self.regexByte[s]) {
+                j ++;
+                s ++;
+                if (s >= self.regexLen){
+                    findIndex = j - self.regexLen;
+                    break;
+                }
+            }else{
+                s = regexNext[s];
+            }
+        }
+        
+//        NSLog(@"===== find part data ===== %d", findIndex);
+        
+        if (findIndex != -1) {
+            //find part data
+
+            if (findIndex >= self.splitLen) {
+                int jj = 0;
+                int ss = 0;
+                
+                while (jj < findIndex) {
+                    if (ss == -1 || dataByte[jj] == self.splitByte[ss]) {
+                        jj ++;
+                        ss ++;
+                        
+                        if (ss >= self.splitLen) {
+                            int n = jj - self.splitLen;
+                            
+                            NSData *headerData =[self.mutableData subdataWithRange:NSMakeRange(0, n)];
+                            NSString *header = [[NSString alloc] initWithData:headerData encoding:NSUTF8StringEncoding];
+                            NSLog(@"header: %@", header);
+                            
+                            NSData *imageData =[self.mutableData subdataWithRange:NSMakeRange(n + self.splitLen, findIndex - n - self.splitLen)];
+                            NSLog(@"image length: %lu", [imageData length]);
+                            
+                        }
+                        
+                    }else{
+                        ss = splitNext[ss];
+                    }
+                }
+            }
+            
+            //reset
+            self.lastIndex = 0;
+            
+            [self.mutableData replaceBytesInRange:NSMakeRange(0, findIndex + self.regexLen) withBytes:NULL length:0];//删除索引0到索引50的数据
+            
+        }else{
+            self.lastIndex = position - self.regexLen -1;
+        }
+    }
+
 }
 
 //3.当请求完成(成功|失败)的时候会调用该方法，如果请求失败，则error有值
 -(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error{
-    NSLog(@"didCompleteWithError 请求失败: %@", error);
+    NSLog(@"didCompleteWithError 请求结束: %@", error);
 }
 
 @end
