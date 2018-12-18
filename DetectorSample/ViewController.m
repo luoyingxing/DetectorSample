@@ -106,7 +106,8 @@
     // tid=COWN-3B1-UY-4WS&chid=1&from=2018-12-07 16:31:15&to=2018-12-07 16:31:35
     NSString* body = [@"from=2018-12-07 16:31:15&to=2018-12-07 16:31:35" stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"?!@#$^%*+,:;'\"`<>()[]{}/\\| "] invertedSet]];
     
-    NSString *urlStr = [NSString stringWithFormat:@"http://116.204.67.11:17001/stream/read?tid=COWN-3B1-UY-4WS&chid=1&%@", body];
+    NSString *urlStr = @"http://116.204.67.11:17001/stream/read?tid=COWN-3B1-UY-4WS&chid=1"; //real
+//    NSString *urlStr = [NSString stringWithFormat:@"http://116.204.67.11:17001/stream/read?tid=COWN-3B1-UY-4WS&chid=1&%@", body]; //back
     NSLog(@"request url: %@", urlStr);
     //转码
     // stringByAddingPercentEscapesUsingEncoding 只对 `#%^{}[]|\"<> 加空格共14个字符编码，不包括”&?”等符号), ios9将淘汰
@@ -222,12 +223,7 @@
                             NSData *imageData =[self.mutableData subdataWithRange:NSMakeRange(n + splitLen, findIndex - n - splitLen)];
                             NSLog(@"image length: %lu", [imageData length]);
                             
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                UIImage *image = [UIImage imageWithData:imageData];
-                                imageView.image = image;
-                                
-                            });
-                            
+                            [self dispatch:headerData image:imageData];
                         }
                         
                     }else{
@@ -245,13 +241,21 @@
             lastIndex = position - regexLen -1;
         }
     }
-
 }
 
 //3.当请求完成(成功|失败)的时候会调用该方法，如果请求失败，则error有值
 -(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error{
     NSLog(@"didCompleteWithError 请求结束: %@", error);
 }
+
+- (void) dispatch:(NSData*)header image:(NSData*)image{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIImage *img = [UIImage imageWithData:image];
+        imageView.image = img;
+        
+    });
+}
+
 
 @end
 
