@@ -15,4 +15,6 @@
 
 -(void) dispatch:(UIImage*) image;
 
+-(void) dispatchs:(uint8_t) data;
+
 @end

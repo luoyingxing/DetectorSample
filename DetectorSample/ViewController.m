@@ -11,6 +11,7 @@
 #import "colorconvert.h"
 #import "ResponseDelegate.h"
 #import "KCLH264Decoder.h"
+#import "DecodeH264StreamTest.h"
 
 #define screenWidth [UIScreen mainScreen].bounds.size.width
 #define screenHeight [UIScreen mainScreen].bounds.size.height
@@ -33,6 +34,7 @@
 @property (nonatomic, strong) NSData* splitNSData;
 
 @property (nonatomic, strong) KCLH264Decoder *decoder;
+@property (nonatomic, strong) DecodeH264StreamTest *decodeH264Stream;
 
 @end
 
@@ -42,9 +44,13 @@ int mTrans=0x0F0F0F0F;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.decoder = [[KCLH264Decoder alloc] init];
-    [self.decoder initializeDecoder];
-    [self.decoder setResponseDelegate:self];
+//    self.decoder = [[KCLH264Decoder alloc] init];
+//    [self.decoder initializeDecoder];
+//    [self.decoder setResponseDelegate:self];
+    
+    self.decodeH264Stream = [[DecodeH264StreamTest alloc] init];
+    [self.decodeH264Stream initialize];
+    [self.decodeH264Stream setResponseDelegate:self];
     
     
     // Do any additional setup after loading the view, typically from a nib.
@@ -284,7 +290,21 @@ int mTrans=0x0F0F0F0F;
 //    });
     
     //real
-    [self.decoder decodeH264Data:image];
+//    [self.decoder decodeH264Data:image];
+    
+    [self.decodeH264Stream decode:image];
+}
+
+- (void) dispatchs:(uint8_t) data{
+    NSMutableData *valData = [[NSMutableData alloc] init];
+    
+    unsigned char valChar[1];
+    valChar[0] = 0xff & data;
+    [valData appendBytes:valChar length:1];
+    
+    NSData* image = [self dataWithReverse:valData];
+    
+    [self performSelectorOnMainThread:@selector(displayImage:) withObject:image waitUntilDone:YES];
 }
 
 -(void) dispatch:(UIImage*) image{
@@ -295,6 +315,22 @@ int mTrans=0x0F0F0F0F;
 //    NSLog(@"%@", image);
     imageView.image = image;
     
+}
+
+- (NSData *)dataWithReverse:(NSData *)srcData{
+    NSUInteger byteCount = srcData.length;
+    NSMutableData *dstData = [[NSMutableData alloc] initWithData:srcData];
+    NSUInteger halfLength = byteCount / 2;
+    for (NSUInteger i=0; i<halfLength; i++) {
+        NSRange begin = NSMakeRange(i, 1);
+        NSRange end = NSMakeRange(byteCount - i - 1, 1);
+        NSData *beginData = [srcData subdataWithRange:begin];
+        NSData *endData = [srcData subdataWithRange:end];
+        [dstData replaceBytesInRange:begin withBytes:endData.bytes];
+        [dstData replaceBytesInRange:end withBytes:beginData.bytes];
+    }
+    
+    return dstData;
 }
 
 -(void) play:(UITapGestureRecognizer *)recognizer{
