@@ -1,6 +1,4 @@
 /*
- * Copyright (c) 2009 Mans Rullgard <mans@mansr.com>
- *
  * This file is part of FFmpeg.
  *
  * FFmpeg is free software; you can redistribute it and/or
@@ -18,23 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef AVUTIL_ARM_TIMER_H
-#define AVUTIL_ARM_TIMER_H
+#ifndef AVUTIL_HWCONTEXT_VDPAU_H
+#define AVUTIL_HWCONTEXT_VDPAU_H
 
-#include <stdint.h>
-#include "config.h"
+#include <vdpau/vdpau.h>
 
-#if HAVE_INLINE_ASM && defined(__ARM_ARCH_7A__)
+/**
+ * @file
+ * An API-specific header for AV_HWDEVICE_TYPE_VDPAU.
+ *
+ * This API supports dynamic frame pools. AVHWFramesContext.pool must return
+ * AVBufferRefs whose data pointer is a VdpVideoSurface.
+ */
 
-#define AV_READ_TIME read_time
+/**
+ * This struct is allocated as AVHWDeviceContext.hwctx
+ */
+typedef struct AVVDPAUDeviceContext {
+    VdpDevice          device;
+    VdpGetProcAddress *get_proc_address;
+} AVVDPAUDeviceContext;
 
-static inline uint64_t read_time(void)
-{
-    unsigned cc;
-    __asm__ volatile ("mrc p15, 0, %0, c9, c13, 0" : "=r"(cc));
-    return cc;
-}
+/**
+ * AVHWFramesContext.hwctx is currently not used
+ */
 
-#endif /* HAVE_INLINE_ASM && __ARM_ARCH_7A__ */
-
-#endif /* AVUTIL_ARM_TIMER_H */
+#endif /* AVUTIL_HWCONTEXT_VDPAU_H */

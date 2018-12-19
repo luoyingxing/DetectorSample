@@ -1,6 +1,4 @@
 /*
- * copyright (c) 2006 Michael Niedermayer <michaelni@gmx.at>
- *
  * This file is part of FFmpeg.
  *
  * FFmpeg is free software; you can redistribute it and/or
@@ -18,33 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef AVUTIL_X86_TIMER_H
-#define AVUTIL_X86_TIMER_H
 
-#include <stdint.h>
+#ifndef AVUTIL_HWCONTEXT_CUDA_H
+#define AVUTIL_HWCONTEXT_CUDA_H
 
-#if HAVE_INLINE_ASM
-
-#define FF_TIMER_UNITS "decicycles"
-#define AV_READ_TIME read_time
-
-static inline uint64_t read_time(void)
-{
-    uint32_t a, d;
-    __asm__ volatile(
-#if ARCH_X86_64 || defined(__SSE2__)
-                     "lfence \n\t"
+#ifndef CUDA_VERSION
+#include <cuda.h>
 #endif
-                     "rdtsc  \n\t"
-                     : "=a" (a), "=d" (d));
-    return ((uint64_t)d << 32) + a;
-}
 
-#elif HAVE_RDTSC
+#include "pixfmt.h"
 
-#include <intrin.h>
-#define AV_READ_TIME __rdtsc
+/**
+ * @file
+ * An API-specific header for AV_HWDEVICE_TYPE_CUDA.
+ *
+ * This API supports dynamic frame pools. AVHWFramesContext.pool must return
+ * AVBufferRefs whose data pointer is a CUdeviceptr.
+ */
 
-#endif /* HAVE_INLINE_ASM */
+typedef struct AVCUDADeviceContextInternal AVCUDADeviceContextInternal;
 
-#endif /* AVUTIL_X86_TIMER_H */
+/**
+ * This struct is allocated as AVHWDeviceContext.hwctx
+ */
+typedef struct AVCUDADeviceContext {
+    CUcontext cuda_ctx;
+    AVCUDADeviceContextInternal *internal;
+} AVCUDADeviceContext;
+
+/**
+ * AVHWFramesContext.hwctx is currently not used
+ */
+
+#endif /* AVUTIL_HWCONTEXT_CUDA_H */
