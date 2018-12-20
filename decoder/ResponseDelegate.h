@@ -17,4 +17,6 @@
 
 -(void) dispatchs:(uint8_t) data;
 
+-(void) dispatchBuff:(CVPixelBufferRef) buff;
+
 @end

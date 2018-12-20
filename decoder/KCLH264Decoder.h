@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "ResponseDelegate.h"
+#import "OpenGLView20.h"
 
 @interface KCLH264Decoder : NSObject{
     id<ResponseDelegate> responseDelegate;
 }
+
+@property (nonatomic, strong) OpenGLView20 *openGLView20;
 
 - (void)initializeDecoder;
 

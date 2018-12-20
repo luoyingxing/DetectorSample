@@ -14,6 +14,7 @@
 		66252EBD21C38E1F00533499 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66252EBC21C38E1F00533499 /* Assets.xcassets */; };
 		66252EC021C38E1F00533499 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 66252EBE21C38E1F00533499 /* LaunchScreen.storyboard */; };
 		66252EC321C38E1F00533499 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 66252EC221C38E1F00533499 /* main.m */; };
+		668869C021CB8AFB00B536E3 /* OpenGLView20.m in Sources */ = {isa = PBXBuildFile; fileRef = 668869BF21CB8AFB00B536E3 /* OpenGLView20.m */; };
 		66D0954321C9EF8000ABE543 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66D0953C21C9EF8000ABE543 /* libavcodec.a */; };
 		66D0954421C9EF8000ABE543 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66D0953D21C9EF8000ABE543 /* libavdevice.a */; };
 		66D0954521C9EF8000ABE543 /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66D0953E21C9EF8000ABE543 /* libavfilter.a */; };
@@ -57,6 +58,8 @@
 		66252EC121C38E1F00533499 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		66252EC221C38E1F00533499 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		66252ECA21C3A8FC00533499 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		668869BE21CB8AFB00B536E3 /* OpenGLView20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLView20.h; sourceTree = "<group>"; };
+		668869BF21CB8AFB00B536E3 /* OpenGLView20.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenGLView20.m; sourceTree = "<group>"; };
 		66D094CB21C9EF7800ABE543 /* avcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avcodec.h; sourceTree = "<group>"; };
 		66D094CC21C9EF7800ABE543 /* avdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avdct.h; sourceTree = "<group>"; };
 		66D094CD21C9EF7800ABE543 /* avfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avfft.h; sourceTree = "<group>"; };
@@ -493,6 +496,8 @@
 		66F2F21321C8CCDD00BACC19 /* decoder */ = {
 			isa = PBXGroup;
 			children = (
+				668869BE21CB8AFB00B536E3 /* OpenGLView20.h */,
+				668869BF21CB8AFB00B536E3 /* OpenGLView20.m */,
 				66D0955721CA566100ABE543 /* colorconvert.c */,
 				66D0955A21CA566100ABE543 /* colorconvert.h */,
 				66D0955821CA566100ABE543 /* KCLH264Decoder.h */,
@@ -601,6 +606,7 @@
 				66D0955121CA41C700ABE543 /* DecodeH264StreamTest.m in Sources */,
 				66D0955D21CA566100ABE543 /* KCLH264Decoder.m in Sources */,
 				66252EB221C38E1F00533499 /* AppDelegate.m in Sources */,
+				668869C021CB8AFB00B536E3 /* OpenGLView20.m in Sources */,
 				66D0955E21CA566100ABE543 /* VideoDecoder.c in Sources */,
 				66252EC321C38E1F00533499 /* main.m in Sources */,
 				66252EBB21C38E1F00533499 /* DetectorSample.xcdatamodeld in Sources */,

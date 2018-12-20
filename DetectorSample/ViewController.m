@@ -5,19 +5,23 @@
 //  Created by luoyingxing on 2018/10/30.
 //  Copyright © 2018 luoyingxing. All rights reserved.
 //
-
+#import <AVFoundation/AVFoundation.h>
 #import "ViewController.h"
 #import "VideoDecoder.h"
 #import "colorconvert.h"
 #import "ResponseDelegate.h"
 #import "KCLH264Decoder.h"
-#import "DecodeH264StreamTest.h"
+//#import "DecodeH264StreamTest.h"
+#import "OpenGLView20.h"
 
 #define screenWidth [UIScreen mainScreen].bounds.size.width
 #define screenHeight [UIScreen mainScreen].bounds.size.height
 
 @interface ViewController () <ResponseDelegate, NSURLSessionDataDelegate>{
     UIImageView *imageView;
+    AVSampleBufferDisplayLayer *sampleBufferDisplayLayer;
+    CVPixelBufferRef* previousPixelBuffer;
+    OpenGLView20 *openGLView20;
     
     int regexNext[40];
     int splitNext[4];
@@ -26,15 +30,16 @@
     int splitLen;
     
     int lastIndex;
+    
+    BOOL hasAddObserver;
 }
 
 //缓存接受到的数据
 @property (nonatomic, strong) NSMutableData* mutableData;
 @property (nonatomic, strong) NSData* regexNSData;
 @property (nonatomic, strong) NSData* splitNSData;
-
 @property (nonatomic, strong) KCLH264Decoder *decoder;
-@property (nonatomic, strong) DecodeH264StreamTest *decodeH264Stream;
+//@property (nonatomic, strong) DecodeH264StreamTest *decodeH264Stream;
 
 @end
 
@@ -44,13 +49,13 @@ int mTrans=0x0F0F0F0F;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    self.decoder = [[KCLH264Decoder alloc] init];
-//    [self.decoder initializeDecoder];
-//    [self.decoder setResponseDelegate:self];
+    self.decoder = [[KCLH264Decoder alloc] init];
+    [self.decoder initializeDecoder];
+    [self.decoder setResponseDelegate:self];
     
-    self.decodeH264Stream = [[DecodeH264StreamTest alloc] init];
-    [self.decodeH264Stream initialize];
-    [self.decodeH264Stream setResponseDelegate:self];
+//    self.decodeH264Stream = [[DecodeH264StreamTest alloc] init];
+//    [self.decodeH264Stream initialize];
+//    [self.decodeH264Stream setResponseDelegate:self];
     
     
     // Do any additional setup after loading the view, typically from a nib.
@@ -76,11 +81,24 @@ int mTrans=0x0F0F0F0F;
     [hLabel addGestureRecognizer:r1];
     
     imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 200, screenWidth, screenWidth * 9 / 16)];
-    UIImage *image = [[UIImage alloc] init];
-    image = [UIImage imageNamed:@"img_two.jpg"];
-    imageView.image = image;
+//    UIImage *image = [[UIImage alloc] init];
+//    image = [UIImage imageNamed:@"img_two.jpg"];
+//    imageView.image = image;
 //    imageView.contentMode =  UIViewContentModeCenter;
     [self.view addSubview:imageView];
+    
+    sampleBufferDisplayLayer = [[AVSampleBufferDisplayLayer alloc] init];
+    sampleBufferDisplayLayer.frame = imageView.bounds;
+    sampleBufferDisplayLayer.position = CGPointMake(CGRectGetMidX(imageView.bounds), CGRectGetMidY(imageView.bounds));
+    sampleBufferDisplayLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+    sampleBufferDisplayLayer.opaque = YES;
+    [imageView.layer addSublayer:sampleBufferDisplayLayer];
+    
+    openGLView20 = [[OpenGLView20 alloc] initWithFrame:CGRectMake(0, 250, screenWidth, screenWidth * 9 / 16)];
+    [openGLView20 setVideoSize:screenWidth height:screenWidth * 9 / 16];
+    [self.view addSubview:openGLView20];
+    
+    self.decoder.openGLView20 = openGLView20;
 }
 
 - (void) viewWillAppear:(BOOL)animated{
@@ -139,7 +157,7 @@ int mTrans=0x0F0F0F0F;
     // tid=COWN-3B1-UY-4WS&chid=1&from=2018-12-07 16:31:15&to=2018-12-07 16:31:35
     NSString* body = [@"from=2018-12-07 16:31:15&to=2018-12-07 16:31:35" stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"?!@#$^%*+,:;'\"`<>()[]{}/\\| "] invertedSet]];
     
-    NSString *urlStr = @"http://116.204.67.11:17001/stream/read?tid=COWN-3B1-UY-4WS&chid=1"; //real
+    NSString *urlStr = @"http://116.204.67.11:17001/stream/read?tid=COWN-3B1-UY-4WS&chid=1"; //real COWN-CX3-7N-5E9
 //    NSString *urlStr = [NSString stringWithFormat:@"http://116.204.67.11:17001/stream/read?tid=COWN-3B1-UY-4WS&chid=1&%@", body]; //back
     NSLog(@"request url: %@", urlStr);
     //转码
@@ -200,80 +218,80 @@ int mTrans=0x0F0F0F0F;
 //    NSLog(@"didReceiveData：%hhu", dataByte[0]);
     
 //    NSData* nsData = [[NSData alloc] initWithBytes:dataByte length:data.length];
-    
+    [self.decoder decodeH264Data:data];
     //0.
-    Byte* regexByte = (Byte*)[self.regexNSData bytes];
-    Byte* splitByte = (Byte*)[self.splitNSData bytes];
-    
-    //1. add to mutable date
-    [self.mutableData appendData:data];
-    
-    //2. find regex
-    Byte *dataByte = (Byte *)[self.mutableData bytes];
-    int position = (int)[self.mutableData length] - 1;
-    
-//    NSLog(@"当前数据长度： %d", position);
-//    NSLog(@"didReceiveData：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
-    
-    if (position > regexLen) {
-        int findIndex = -1;
-        int j = lastIndex;
-        int s = 0;
-        while(j < position){
-            if (s == -1 || dataByte[j] == regexByte[s]) {
-                j ++;
-                s ++;
-                if (s >= regexLen){
-                    findIndex = j - regexLen;
-                    break;
-                }
-            }else{
-                s = regexNext[s];
-            }
-        }
-        
-//        NSLog(@"===== find part data ===== %d", findIndex);
-        
-        if (findIndex != -1) {
-            //find part data
-
-            if (findIndex >= splitLen) {
-                int jj = 0;
-                int ss = 0;
-                
-                while (jj < findIndex) {
-                    if (ss == -1 || dataByte[jj] == splitByte[ss]) {
-                        jj ++;
-                        ss ++;
-                        
-                        if (ss >= splitLen) {
-                            int n = jj - splitLen;
-                            
-                            NSData *headerData =[self.mutableData subdataWithRange:NSMakeRange(0, n)];
-                            NSString *header = [[NSString alloc] initWithData:headerData encoding:NSUTF8StringEncoding];
-                            NSLog(@"header: %@", header);
-                            
-                            NSData *imageData =[self.mutableData subdataWithRange:NSMakeRange(n + splitLen, findIndex - n - splitLen)];
-                            NSLog(@"image length: %lu", [imageData length]);
-                            
-                            [self dispatch:headerData image:imageData];
-                        }
-                        
-                    }else{
-                        ss = splitNext[ss];
-                    }
-                }
-            }
-            
-            //reset
-            lastIndex = 0;
-            
-            [self.mutableData replaceBytesInRange:NSMakeRange(0, findIndex + regexLen) withBytes:NULL length:0];//删除索引0到索引50的数据
-            
-        }else{
-            lastIndex = position - regexLen -1;
-        }
-    }
+//    Byte* regexByte = (Byte*)[self.regexNSData bytes];
+//    Byte* splitByte = (Byte*)[self.splitNSData bytes];
+//
+//    //1. add to mutable date
+//    [self.mutableData appendData:data];
+//
+//    //2. find regex
+//    Byte *dataByte = (Byte *)[self.mutableData bytes];
+//    int position = (int)[self.mutableData length] - 1;
+//
+////    NSLog(@"当前数据长度： %d", position);
+////    NSLog(@"didReceiveData：regex:%s  regex[0]:%d", self.regexByte, self.regexByte[0]);
+//
+//    if (position > regexLen) {
+//        int findIndex = -1;
+//        int j = lastIndex;
+//        int s = 0;
+//        while(j < position){
+//            if (s == -1 || dataByte[j] == regexByte[s]) {
+//                j ++;
+//                s ++;
+//                if (s >= regexLen){
+//                    findIndex = j - regexLen;
+//                    break;
+//                }
+//            }else{
+//                s = regexNext[s];
+//            }
+//        }
+//
+////        NSLog(@"===== find part data ===== %d", findIndex);
+//
+//        if (findIndex != -1) {
+//            //find part data
+//
+//            if (findIndex >= splitLen) {
+//                int jj = 0;
+//                int ss = 0;
+//
+//                while (jj < findIndex) {
+//                    if (ss == -1 || dataByte[jj] == splitByte[ss]) {
+//                        jj ++;
+//                        ss ++;
+//
+//                        if (ss >= splitLen) {
+//                            int n = jj - splitLen;
+//
+//                            NSData *headerData =[self.mutableData subdataWithRange:NSMakeRange(0, n)];
+//                            NSString *header = [[NSString alloc] initWithData:headerData encoding:NSUTF8StringEncoding];
+//                            NSLog(@"header: %@", header);
+//
+//                            NSData *imageData =[self.mutableData subdataWithRange:NSMakeRange(n + splitLen, findIndex - n - splitLen)];
+//                            NSLog(@"image length: %lu", [imageData length]);
+//
+//                            [self dispatch:headerData image:imageData];
+//                        }
+//
+//                    }else{
+//                        ss = splitNext[ss];
+//                    }
+//                }
+//            }
+//
+//            //reset
+//            lastIndex = 0;
+//
+//            [self.mutableData replaceBytesInRange:NSMakeRange(0, findIndex + regexLen) withBytes:NULL length:0];//删除索引0到索引50的数据
+//
+//        }else{
+//            lastIndex = position - regexLen -1;
+//        }
+//    }
 }
 
 //3.当请求完成(成功|失败)的时候会调用该方法，如果请求失败，则error有值
@@ -290,9 +308,9 @@ int mTrans=0x0F0F0F0F;
 //    });
     
     //real
-//    [self.decoder decodeH264Data:image];
+    [self.decoder decodeH264Data:image];
     
-    [self.decodeH264Stream decode:image];
+//    [self.decodeH264Stream decode:image];
 }
 
 - (void) dispatchs:(uint8_t) data{
@@ -315,6 +333,106 @@ int mTrans=0x0F0F0F0F;
 //    NSLog(@"%@", image);
     imageView.image = image;
     
+}
+
+- (void) dispatchBuff:(CVPixelBufferRef)buff{
+    [self dispatchPixelBuffer:buff];
+}
+
+//把pixelBuffer包装成samplebuffer送给displayLayer
+- (void) dispatchPixelBuffer:(CVPixelBufferRef) pixelBuffer{
+    if (!pixelBuffer){
+        return;
+    }
+    @synchronized(self) {
+        if (previousPixelBuffer){
+            CFRelease(previousPixelBuffer);
+            previousPixelBuffer = nil;
+        }
+        previousPixelBuffer = CFRetain(pixelBuffer);
+    }
+    
+    //不设置具体时间信息
+    CMSampleTimingInfo timing = {kCMTimeInvalid, kCMTimeInvalid, kCMTimeInvalid};
+    //获取视频信息
+    CMVideoFormatDescriptionRef videoInfo = NULL;
+    OSStatus result = CMVideoFormatDescriptionCreateForImageBuffer(NULL, pixelBuffer, &videoInfo);
+    NSParameterAssert(result == 0 && videoInfo != NULL);
+    
+    CMSampleBufferRef sampleBuffer = NULL;
+    result = CMSampleBufferCreateForImageBuffer(kCFAllocatorDefault,pixelBuffer, true, NULL, NULL, videoInfo, &timing, &sampleBuffer);
+    NSParameterAssert(result == 0 && sampleBuffer != NULL);
+    CFRelease(pixelBuffer);
+    CFRelease(videoInfo);
+    
+    CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, YES);
+    CFMutableDictionaryRef dict = (CFMutableDictionaryRef)CFArrayGetValueAtIndex(attachments, 0);
+    CFDictionarySetValue(dict, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
+    [self enqueueSampleBuffer:sampleBuffer toLayer:sampleBufferDisplayLayer];
+    CFRelease(sampleBuffer);
+}
+
+- (void) enqueueSampleBuffer:(CMSampleBufferRef) sampleBuffer toLayer:(AVSampleBufferDisplayLayer*) layer{
+    if (sampleBuffer){
+        CFRetain(sampleBuffer);
+        [layer enqueueSampleBuffer:sampleBuffer];
+        CFRelease(sampleBuffer);
+        if (layer.status == AVQueuedSampleBufferRenderingStatusFailed){
+            NSLog(@"ERROR: %@", layer.error);
+            if (-11847 == layer.error.code){
+                [self rebuildSampleBufferDisplayLayer];
+            }
+        }else{
+            //NSLog(@"STATUS: %i", (int)layer.status);
+        }
+    }else{
+        NSLog(@"ignore null samplebuffer");
+    }
+}
+
+
+- (void)rebuildSampleBufferDisplayLayer{
+    @synchronized(self) {
+        [self teardownSampleBufferDisplayLayer];
+        [self setupSampleBufferDisplayLayer];
+    }
+}
+
+- (void)teardownSampleBufferDisplayLayer
+{
+    if (sampleBufferDisplayLayer){
+        [sampleBufferDisplayLayer stopRequestingMediaData];
+        [sampleBufferDisplayLayer removeFromSuperlayer];
+        sampleBufferDisplayLayer = nil;
+    }
+}
+
+- (void)setupSampleBufferDisplayLayer{
+    if (!sampleBufferDisplayLayer){
+        sampleBufferDisplayLayer = [[AVSampleBufferDisplayLayer alloc] init];
+        sampleBufferDisplayLayer.frame = self.view.bounds;
+        sampleBufferDisplayLayer.position = CGPointMake(CGRectGetMidX(self.view.bounds), CGRectGetMidY(self.view.bounds));
+        sampleBufferDisplayLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+        sampleBufferDisplayLayer.opaque = YES;
+        [self.view.layer addSublayer:sampleBufferDisplayLayer];
+    }else{
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        sampleBufferDisplayLayer.frame = self.view.bounds;
+        sampleBufferDisplayLayer.position = CGPointMake(CGRectGetMidX(self.view.bounds), CGRectGetMidY(self.view.bounds));
+        [CATransaction commit];
+    }
+    [self addObserver];
+}
+
+
+- (void)addObserver{
+    if (!hasAddObserver){
+        NSNotificationCenter * notificationCenter = [NSNotificationCenter defaultCenter];
+        [notificationCenter addObserver: self selector:@selector(didResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+        [notificationCenter addObserver: self selector:@selector(didBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+        hasAddObserver = YES;
+    }
 }
 
 - (NSData *)dataWithReverse:(NSData *)srcData{
