@@ -7,11 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DetectorPlayer.h"
 #import "DetectorPlayView.h"
 #import "DetectorPlayDelegate.h"
 
-@interface DetectorPlayer : NSObject{
+@interface DetectorDecoder : NSObject{
     id<DetectorPlayDelegate> detectorPlayDelegate;
 }
 

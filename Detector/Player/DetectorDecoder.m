@@ -6,7 +6,7 @@
 //  Copyright © 2018年 luoyingxing. All rights reserved.
 //
 
-#import "DetectorPlayer.h"
+#import "DetectorDecoder.h"
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreVideo/CoreVideo.h>
@@ -15,7 +15,7 @@
 #import <libavutil/pixdesc.h>
 #import <libavutil/imgutils.h>
 
-@implementation DetectorPlayer{
+@implementation DetectorDecoder{
      CVPixelBufferPoolRef *pixelBufferPool;
      AVCodec *codec;
      AVCodecParserContext *codecParser;

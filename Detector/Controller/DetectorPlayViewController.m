@@ -9,7 +9,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "DetectorPlayViewController.h"
 #import "DetectorPlayView.h"
-#import "DetectorPlayer.h"
+#import "DetectorDecoder.h"
 #import "DetectorPlayDelegate.h"
 
 #define screenWidth [UIScreen mainScreen].bounds.size.width
@@ -19,7 +19,7 @@
     DetectorPlayView *detectorPlayView;
 }
 
-@property (nonatomic, strong) DetectorPlayer *detectorPlayer;
+@property (nonatomic, strong) DetectorDecoder *detectorDecoder;
 
 @end
 
@@ -55,14 +55,14 @@
 }
 
 - (void) initPlayView{
-    self.detectorPlayer = [[DetectorPlayer alloc] init];
-    [self.detectorPlayer initializeDecoder];
-    [self.detectorPlayer setDetectorPlayDelegate:self];
+    self.detectorDecoder = [[DetectorDecoder alloc] init];
+    [self.detectorDecoder initializeDecoder];
+    [self.detectorDecoder setDetectorPlayDelegate:self];
     
     detectorPlayView = [[DetectorPlayView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenWidth * 9 / 16)];
     [detectorPlayView setVideoSize:screenWidth height:screenWidth * 9 / 16];
     [self.view addSubview:detectorPlayView];
-    self.detectorPlayer.detectorPlayView = detectorPlayView;
+    self.detectorDecoder.detectorPlayView = detectorPlayView;
 }
 
 - (void) back:(id)sender{
@@ -121,7 +121,7 @@
 
 //2.接收到服务器返回数据的时候会调用该方法，如果数据较大那么该方法可能会调用多次
 -(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data{
-    [self.detectorPlayer decodeH264Data:data];
+    [self.detectorDecoder decodeH264Data:data];
 }
 
 //3.当请求完成(成功|失败)的时候会调用该方法，如果请求失败，则error有值
