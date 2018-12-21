@@ -59,13 +59,14 @@
 #endif
 }
 
-#pragma mark - 接口
-- (void)displayYUV420pData:(void *)data width:(NSInteger)w height:(NSInteger)h;
+# pragma mark - 接口
+//设置视频尺寸
 - (void)setVideoSize:(GLuint)width height:(GLuint)height;
 
-/**
- 清除画面
- */
+//显示yuv420p数据，传入相应的视频尺寸
+- (void)displayYUV420pData:(void *)data width:(NSInteger)w height:(NSInteger)h;
+
+//清除画面
 - (void)clearFrame;
 
 @end

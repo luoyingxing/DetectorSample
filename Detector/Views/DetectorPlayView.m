@@ -46,7 +46,7 @@ enum TextureType{
 
 /**
  编译着色代码
- @param shader        代码
+ @param shaderCode    代码
  @param shaderType    类型
  @return 成功返回着色器 失败返回－1
  */
@@ -134,7 +134,7 @@ enum TextureType{
     }
     glGenTextures(3, _textureYUV);
     if (!_textureYUV[TEXY] || !_textureYUV[TEXU] || !_textureYUV[TEXV]){
-        NSLog(@"<<<<<<<<<<<<纹理创建失败!>>>>>>>>>>>>");
+        NSLog(@"<<<<<<<<<<<< DetectorPlayerView 纹理创建失败 >>>>>>>>>>>>");
         return;
     }
     
@@ -421,7 +421,6 @@ TexCoordOut = TexCoordIn;\
     free(blackData);
 }
 
-
 - (void)clearFrame{
     if ([self window]){
         [EAGLContext setCurrentContext:_glContext];
@@ -430,7 +429,6 @@ TexCoordOut = TexCoordIn;\
         glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffer);
         [_glContext presentRenderbuffer:GL_RENDERBUFFER];
     }
-    
 }
 
 @end
