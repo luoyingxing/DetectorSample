@@ -30,6 +30,7 @@
 		66DC72FA21CC8B2B00637D62 /* ic_bar_back.png in Resources */ = {isa = PBXBuildFile; fileRef = 66DC72F921CC8B2B00637D62 /* ic_bar_back.png */; };
 		66DC72FD21CC8C3500637D62 /* DetectorPlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DC72FC21CC8C3500637D62 /* DetectorPlayView.m */; };
 		66DC730121CC9AEC00637D62 /* DetectorDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DC730021CC9AEC00637D62 /* DetectorDecoder.m */; };
+		66DC730821CCE75F00637D62 /* DetectorPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DC730721CCE75F00637D62 /* DetectorPlayer.m */; };
 		66F2F1EE21C8956F00BACC19 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 66F2F1ED21C8956700BACC19 /* libz.tbd */; };
 		66F2F1F021C8958200BACC19 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 66F2F1EF21C8958200BACC19 /* libiconv.tbd */; };
 		66F2F1F221C8958D00BACC19 /* libbz2.1.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 66F2F1F121C8958D00BACC19 /* libbz2.1.0.tbd */; };
@@ -194,6 +195,8 @@
 		66DC72FF21CC9AEC00637D62 /* DetectorDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetectorDecoder.h; sourceTree = "<group>"; };
 		66DC730021CC9AEC00637D62 /* DetectorDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetectorDecoder.m; sourceTree = "<group>"; };
 		66DC730321CCDAE400637D62 /* DetectorPlayDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetectorPlayDelegate.h; sourceTree = "<group>"; };
+		66DC730621CCE75F00637D62 /* DetectorPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetectorPlayer.h; sourceTree = "<group>"; };
+		66DC730721CCE75F00637D62 /* DetectorPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetectorPlayer.m; sourceTree = "<group>"; };
 		66F2F1ED21C8956700BACC19 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		66F2F1EF21C8958200BACC19 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		66F2F1F121C8958D00BACC19 /* libbz2.1.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.1.0.tbd; path = usr/lib/libbz2.1.0.tbd; sourceTree = SDKROOT; };
@@ -530,6 +533,8 @@
 			children = (
 				66DC72FF21CC9AEC00637D62 /* DetectorDecoder.h */,
 				66DC730021CC9AEC00637D62 /* DetectorDecoder.m */,
+				66DC730621CCE75F00637D62 /* DetectorPlayer.h */,
+				66DC730721CCE75F00637D62 /* DetectorPlayer.m */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -674,6 +679,7 @@
 				66252EB521C38E1F00533499 /* ViewController.m in Sources */,
 				66D0955121CA41C700ABE543 /* DecodeH264StreamTest.m in Sources */,
 				66DC730121CC9AEC00637D62 /* DetectorDecoder.m in Sources */,
+				66DC730821CCE75F00637D62 /* DetectorPlayer.m in Sources */,
 				66D0955D21CA566100ABE543 /* KCLH264Decoder.m in Sources */,
 				66DC72FD21CC8C3500637D62 /* DetectorPlayView.m in Sources */,
 				66252EB221C38E1F00533499 /* AppDelegate.m in Sources */,
