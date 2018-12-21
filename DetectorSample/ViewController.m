@@ -13,6 +13,7 @@
 #import "KCLH264Decoder.h"
 //#import "DecodeH264StreamTest.h"
 #import "OpenGLView20.h"
+#import "DetectorPlayViewController.h"
 
 #define screenWidth [UIScreen mainScreen].bounds.size.width
 #define screenHeight [UIScreen mainScreen].bounds.size.height
@@ -74,10 +75,10 @@ int mTrans=0x0F0F0F0F;
     [playLabel addGestureRecognizer:r];
     
     UILabel *hLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 60, 100, 50)];
-    hLabel.text = @"h264";
+    hLabel.text = @"detectorPlay";
     [self.view addSubview:hLabel];
     hLabel.userInteractionEnabled=YES;
-    UITapGestureRecognizer *r1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playh264:)];
+    UITapGestureRecognizer *r1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(detectorPlay:)];
     [hLabel addGestureRecognizer:r1];
     
     imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 200, screenWidth, screenWidth * 9 / 16)];
@@ -647,12 +648,14 @@ void flip(char *pRGBBuffer, int nWidth, int nHeight){
      memcpy(pRGBBuffer + (nHeight - i - 1)*nWidth + nWidth*nHeight*2, temp, nWidth);
      }
      */
-    
 }
 
--(void) playh264:(UITapGestureRecognizer *)recognizer{
-    NSLog(@"playh264");
-    
+-(void) detectorPlay:(UITapGestureRecognizer *)recognizer{
+    DetectorPlayViewController *controller = [[DetectorPlayViewController alloc] init];
+    controller.edgesForExtendedLayout = UIRectEdgeNone;
+    UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
+    [navigationController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    [self presentViewController:navigationController animated:TRUE completion:nil];
 }
 
 @end

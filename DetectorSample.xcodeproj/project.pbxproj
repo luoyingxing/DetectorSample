@@ -26,6 +26,10 @@
 		66D0955C21CA566100ABE543 /* colorconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = 66D0955721CA566100ABE543 /* colorconvert.c */; };
 		66D0955D21CA566100ABE543 /* KCLH264Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 66D0955921CA566100ABE543 /* KCLH264Decoder.m */; };
 		66D0955E21CA566100ABE543 /* VideoDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 66D0955B21CA566100ABE543 /* VideoDecoder.c */; };
+		66DC72F821CC867D00637D62 /* DetectorPlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DC72F721CC867D00637D62 /* DetectorPlayViewController.m */; };
+		66DC72FA21CC8B2B00637D62 /* ic_bar_back.png in Resources */ = {isa = PBXBuildFile; fileRef = 66DC72F921CC8B2B00637D62 /* ic_bar_back.png */; };
+		66DC72FD21CC8C3500637D62 /* DetectorPlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DC72FC21CC8C3500637D62 /* DetectorPlayView.m */; };
+		66DC730121CC9AEC00637D62 /* DetectorPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 66DC730021CC9AEC00637D62 /* DetectorPlayer.m */; };
 		66F2F1EE21C8956F00BACC19 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 66F2F1ED21C8956700BACC19 /* libz.tbd */; };
 		66F2F1F021C8958200BACC19 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 66F2F1EF21C8958200BACC19 /* libiconv.tbd */; };
 		66F2F1F221C8958D00BACC19 /* libbz2.1.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 66F2F1F121C8958D00BACC19 /* libbz2.1.0.tbd */; };
@@ -182,6 +186,13 @@
 		66D0955921CA566100ABE543 /* KCLH264Decoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KCLH264Decoder.m; sourceTree = "<group>"; };
 		66D0955A21CA566100ABE543 /* colorconvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colorconvert.h; sourceTree = "<group>"; };
 		66D0955B21CA566100ABE543 /* VideoDecoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VideoDecoder.c; sourceTree = "<group>"; };
+		66DC72F621CC867D00637D62 /* DetectorPlayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetectorPlayViewController.h; sourceTree = "<group>"; };
+		66DC72F721CC867D00637D62 /* DetectorPlayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetectorPlayViewController.m; sourceTree = "<group>"; };
+		66DC72F921CC8B2B00637D62 /* ic_bar_back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_bar_back.png; sourceTree = "<group>"; };
+		66DC72FB21CC8C3500637D62 /* DetectorPlayView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetectorPlayView.h; sourceTree = "<group>"; };
+		66DC72FC21CC8C3500637D62 /* DetectorPlayView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetectorPlayView.m; sourceTree = "<group>"; };
+		66DC72FF21CC9AEC00637D62 /* DetectorPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetectorPlayer.h; sourceTree = "<group>"; };
+		66DC730021CC9AEC00637D62 /* DetectorPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetectorPlayer.m; sourceTree = "<group>"; };
 		66F2F1ED21C8956700BACC19 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		66F2F1EF21C8958200BACC19 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		66F2F1F121C8958D00BACC19 /* libbz2.1.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.1.0.tbd; path = usr/lib/libbz2.1.0.tbd; sourceTree = SDKROOT; };
@@ -237,6 +248,7 @@
 			children = (
 				66F2F21321C8CCDD00BACC19 /* decoder */,
 				66252EAF21C38E1F00533499 /* DetectorSample */,
+				66DC72F221CC85C700637D62 /* Detector */,
 				66252EAE21C38E1F00533499 /* Products */,
 				66252EC921C3A8FC00533499 /* Frameworks */,
 			);
@@ -475,6 +487,51 @@
 			path = lib;
 			sourceTree = "<group>";
 		};
+		66DC72F221CC85C700637D62 /* Detector */ = {
+			isa = PBXGroup;
+			children = (
+				66DC72F521CC865100637D62 /* Controller */,
+				66DC72FE21CC9ABE00637D62 /* Player */,
+				66DC72F421CC861500637D62 /* Models */,
+				66DC72F321CC85E300637D62 /* Views */,
+			);
+			path = Detector;
+			sourceTree = "<group>";
+		};
+		66DC72F321CC85E300637D62 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				66DC72FB21CC8C3500637D62 /* DetectorPlayView.h */,
+				66DC72FC21CC8C3500637D62 /* DetectorPlayView.m */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		66DC72F421CC861500637D62 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		66DC72F521CC865100637D62 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				66DC72F621CC867D00637D62 /* DetectorPlayViewController.h */,
+				66DC72F721CC867D00637D62 /* DetectorPlayViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		66DC72FE21CC9ABE00637D62 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				66DC72FF21CC9AEC00637D62 /* DetectorPlayer.h */,
+				66DC730021CC9AEC00637D62 /* DetectorPlayer.m */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
 		66F2F14721C8948D00BACC19 /* ffmpeg */ = {
 			isa = PBXGroup;
 			children = (
@@ -521,6 +578,7 @@
 		66F2F77221C7A8D500487797 /* image */ = {
 			isa = PBXGroup;
 			children = (
+				66DC72F921CC8B2B00637D62 /* ic_bar_back.png */,
 				66F2F77521C7AB1D00487797 /* img_two.jpg */,
 				66F2F77321C7A8FD00487797 /* img_one.jpg */,
 			);
@@ -587,6 +645,7 @@
 			files = (
 				66F2F21021C8CB7200BACC19 /* 176x144.264 in Resources */,
 				66F2F77421C7A8FD00487797 /* img_one.jpg in Resources */,
+				66DC72FA21CC8B2B00637D62 /* ic_bar_back.png in Resources */,
 				66252EC021C38E1F00533499 /* LaunchScreen.storyboard in Resources */,
 				66252EBD21C38E1F00533499 /* Assets.xcassets in Resources */,
 				66F2F21121C8CB7200BACC19 /* 320x240.264 in Resources */,
@@ -604,10 +663,13 @@
 			files = (
 				66252EB521C38E1F00533499 /* ViewController.m in Sources */,
 				66D0955121CA41C700ABE543 /* DecodeH264StreamTest.m in Sources */,
+				66DC730121CC9AEC00637D62 /* DetectorPlayer.m in Sources */,
 				66D0955D21CA566100ABE543 /* KCLH264Decoder.m in Sources */,
+				66DC72FD21CC8C3500637D62 /* DetectorPlayView.m in Sources */,
 				66252EB221C38E1F00533499 /* AppDelegate.m in Sources */,
 				668869C021CB8AFB00B536E3 /* OpenGLView20.m in Sources */,
 				66D0955E21CA566100ABE543 /* VideoDecoder.c in Sources */,
+				66DC72F821CC867D00637D62 /* DetectorPlayViewController.m in Sources */,
 				66252EC321C38E1F00533499 /* main.m in Sources */,
 				66252EBB21C38E1F00533499 /* DetectorSample.xcdatamodeld in Sources */,
 				66D0955C21CA566100ABE543 /* colorconvert.c in Sources */,
