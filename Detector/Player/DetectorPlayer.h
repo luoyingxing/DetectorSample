@@ -9,20 +9,20 @@
 #import <Foundation/Foundation.h>
 #import "DetectorPlayer.h"
 #import "DetectorPlayView.h"
-#import "ResponseDelegate.h"
+#import "DetectorPlayDelegate.h"
 
 @interface DetectorPlayer : NSObject{
-    id<ResponseDelegate> responseDelegate;
+    id<DetectorPlayDelegate> detectorPlayDelegate;
 }
 
 @property (nonatomic, strong) DetectorPlayView *detectorPlayView;
 
 - (void)initializeDecoder;
 
-- (void)decodeH264Data:(NSData *)data;
-
 - (void)destroyDecoder;
 
-- (void)setResponseDelegate:(id)inDelegate;
+- (void)decodeH264Data:(NSData *)data;
+
+- (void)setDetectorPlayDelegate:(id)delegate;
 
 @end

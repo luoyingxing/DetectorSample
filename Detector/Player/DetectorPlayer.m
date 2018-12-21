@@ -22,10 +22,20 @@
      AVCodecContext *codecContext;
      AVFrame *frame;
      AVPacket *packet;
-    
      struct SwsContext *swsContext;
+    
      uint8_t *pictureData[4];
      int pictureLineSize[4];
+}
+
+-(void) setDetectorPlayDelegate:(id)delegate{
+    detectorPlayDelegate = delegate;
+}
+
+- (void) onPrepared:(NSInteger)frame{
+    if ([detectorPlayDelegate respondsToSelector:@selector(onPrepared:)]) {
+        [detectorPlayDelegate onPrepared:frame];
+    }
 }
 
 - (void)initializeDecoder {
@@ -41,7 +51,7 @@
     }
     
     char *codecName = codec->name;
-    NSLog(@"%s",codecName);
+    NSLog(@"codecName： %s", codecName);
     
     codecParser = av_parser_init(codec->id);
     if (!codecParser) {
@@ -61,6 +71,10 @@
     if (!frame) {
         NSLog(@"初始化解码器失败");
     }
+}
+
+- (void) destroyDecoder{
+    
 }
 
 - (void)decodeH264Data:(NSData *)data {
@@ -97,15 +111,6 @@
             return;
         }
         
-        //        UIImage *image = [self convertFrameToImage:fae];
-        //         NSLog(@"size:%@", NSStringFromCGSize(image.size));
-        
-        //        [self dispatch:image];
-        
-        // ----------
-        //        [self dispatchAVFrame:fae];
-        
-        
         int frameHeight = fae->height;
         int frameWidth = fae->width;
         int channels = 3;
@@ -137,8 +142,8 @@
         }
         
         [self.detectorPlayView displayYUV420pData:pDecodedBuffer width:frameWidth height:frameHeight];
-        free(pDecodedBuffer);
         
+        free(pDecodedBuffer);
         
         //        NSData *imageData = UIImagePNGRepresentation(image);
         // NSLog(@"imageData size:%lld", imageData.length);
@@ -150,16 +155,6 @@
         //
         //        BOOL succeed = [imageData writeToFile:filePathOutput atomically:YES];
         //        NSLog(@"save succeed: %d", succeed);
-    }
-}
-
--(void) setResponseDelegate:(id)inDelegate{
-    responseDelegate = inDelegate;
-}
-
-- (void) dispatch:(UIImage*)image{
-    if ([responseDelegate respondsToSelector:@selector(dispatch:)]) {
-        [responseDelegate dispatch:image];
     }
 }
 

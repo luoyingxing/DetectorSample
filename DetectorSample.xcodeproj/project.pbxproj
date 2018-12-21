@@ -193,6 +193,7 @@
 		66DC72FC21CC8C3500637D62 /* DetectorPlayView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetectorPlayView.m; sourceTree = "<group>"; };
 		66DC72FF21CC9AEC00637D62 /* DetectorPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetectorPlayer.h; sourceTree = "<group>"; };
 		66DC730021CC9AEC00637D62 /* DetectorPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetectorPlayer.m; sourceTree = "<group>"; };
+		66DC730321CCDAE400637D62 /* DetectorPlayDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetectorPlayDelegate.h; sourceTree = "<group>"; };
 		66F2F1ED21C8956700BACC19 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		66F2F1EF21C8958200BACC19 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		66F2F1F121C8958D00BACC19 /* libbz2.1.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.1.0.tbd; path = usr/lib/libbz2.1.0.tbd; sourceTree = SDKROOT; };
@@ -490,6 +491,7 @@
 		66DC72F221CC85C700637D62 /* Detector */ = {
 			isa = PBXGroup;
 			children = (
+				66DC730221CCDA5300637D62 /* Delegate */,
 				66DC72F521CC865100637D62 /* Controller */,
 				66DC72FE21CC9ABE00637D62 /* Player */,
 				66DC72F421CC861500637D62 /* Models */,
@@ -530,6 +532,14 @@
 				66DC730021CC9AEC00637D62 /* DetectorPlayer.m */,
 			);
 			path = Player;
+			sourceTree = "<group>";
+		};
+		66DC730221CCDA5300637D62 /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				66DC730321CCDAE400637D62 /* DetectorPlayDelegate.h */,
+			);
+			path = Delegate;
 			sourceTree = "<group>";
 		};
 		66F2F14721C8948D00BACC19 /* ffmpeg */ = {

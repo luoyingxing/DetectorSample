@@ -10,12 +10,12 @@
 #import "DetectorPlayViewController.h"
 #import "DetectorPlayView.h"
 #import "DetectorPlayer.h"
-#import "ResponseDelegate.h"
+#import "DetectorPlayDelegate.h"
 
 #define screenWidth [UIScreen mainScreen].bounds.size.width
 #define screenHeight [UIScreen mainScreen].bounds.size.height
 
-@interface DetectorPlayViewController ()<ResponseDelegate, NSURLSessionDataDelegate>{
+@interface DetectorPlayViewController ()<DetectorPlayDelegate, NSURLSessionDataDelegate>{
     DetectorPlayView *detectorPlayView;
 }
 
@@ -57,7 +57,7 @@
 - (void) initPlayView{
     self.detectorPlayer = [[DetectorPlayer alloc] init];
     [self.detectorPlayer initializeDecoder];
-    [self.detectorPlayer setResponseDelegate:self];
+    [self.detectorPlayer setDetectorPlayDelegate:self];
     
     detectorPlayView = [[DetectorPlayView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, screenWidth * 9 / 16)];
     [detectorPlayView setVideoSize:screenWidth height:screenWidth * 9 / 16];
@@ -129,6 +129,10 @@
     NSLog(@"didCompleteWithError 请求结束: %@", error);
 }
 
+# pragma DetectorPlayDelegate
+- (void) onPrepared:(NSInteger)frame{
+    
+}
 
 
 @end
