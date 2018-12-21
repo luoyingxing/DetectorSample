@@ -75,6 +75,10 @@
     [self requestPlayReal];
 }
 
+- (void) viewDidDisappear:(BOOL)animated{
+    [self.detectorDecoder destroyDecoder];
+}
+
 -(void)requestPlayReal{
     NSString *urlStr = @"http://116.204.67.11:17001/stream/read?tid=COWN-3B1-UY-4WS&chid=1"; //real COWN-CX3-7N-5E9
     NSURL *url = [NSURL URLWithString:urlStr];

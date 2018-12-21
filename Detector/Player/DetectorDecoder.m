@@ -74,7 +74,18 @@
 }
 
 - (void) destroyDecoder{
-    
+//    free(pixelBufferPool);
+//    av_free(codec);
+//    av_free(codecParser);
+//    av_free(codecContext);
+//    av_free(frame);
+//    av_free(swsContext);
+//
+//    av_freep(codec);
+//    av_freep(codecParser);
+//    av_freep(codecContext);
+//    av_freep(frame);
+//    av_freep(swsContext);
 }
 
 - (void)decodeH264Data:(NSData *)data {
