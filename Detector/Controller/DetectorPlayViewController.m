@@ -95,7 +95,8 @@
      [[NSOperationQueue alloc]init] 非主队列： 代理方法在子线程中调用
      */
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[[NSOperationQueue alloc] init]];
-    
+    [session setSessionDescription:@"real"];
+   
     //创建请求对象
     NSMutableURLRequest *request =[[NSMutableURLRequest alloc] initWithURL:url];
     [request setHTTPMethod:@"GET"];
@@ -112,7 +113,7 @@
 //1.接收到服务器响应的时候调用该方法
 -(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completionHandler{
     //在该方法中可以得到响应头信息，即response
-    NSLog(@"didReceiveResponse 响应头： %@", response);
+    NSLog(@"didReceiveResponse description:[%@]   响应头： %@", session.sessionDescription, response);
     
     //注意：需要使用completionHandler回调告诉系统应该如何处理服务器返回的数据
     //默认是取消的
