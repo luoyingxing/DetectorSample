@@ -74,18 +74,10 @@
 }
 
 - (void) destroyDecoder{
-//    free(pixelBufferPool);
-//    av_free(codec);
-//    av_free(codecParser);
-//    av_free(codecContext);
-//    av_free(frame);
-//    av_free(swsContext);
-//
-//    av_freep(codec);
-//    av_freep(codecParser);
-//    av_freep(codecContext);
-//    av_freep(frame);
-//    av_freep(swsContext);
+    avcodec_free_context(&(codecContext));
+    av_frame_free(&(frame));
+    av_packet_free(&(packet));
+    sws_freeContext(swsContext);
 }
 
 - (void)decodeH264Data:(NSData *)data {
@@ -108,6 +100,10 @@
 }
 
 - (void)decodeCodecContext:(AVCodecContext *)decCtx frame:(AVFrame *)fae packet:(AVPacket *)pkt {
+    if (!codecContext) {
+        return;
+    }
+    
     int ret = avcodec_send_packet(decCtx, pkt);
     if (ret < 0) {
         NSLog(@"解码失败");

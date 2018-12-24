@@ -17,6 +17,7 @@
 
 @interface DetectorPlayViewController ()<DetectorPlayDelegate, NSURLSessionDataDelegate>{
     DetectorPlayView *detectorPlayView;
+    NSURLSessionDataTask* dataTask;
 }
 
 @property (nonatomic, strong) DetectorDecoder *detectorDecoder;
@@ -76,6 +77,7 @@
 }
 
 - (void) viewDidDisappear:(BOOL)animated{
+    [dataTask cancel];
     [self.detectorDecoder destroyDecoder];
 }
 
@@ -103,7 +105,7 @@
     [request addValue:@"CONWIN" forHTTPHeaderField:@"User-Agent"];
     
     //根据会话对象创建一个 Task（发送请求）
-    NSURLSessionDataTask* dataTask = [session dataTaskWithRequest:request];
+    dataTask = [session dataTaskWithRequest:request];
     [dataTask resume]; //执行任务
 }
 
