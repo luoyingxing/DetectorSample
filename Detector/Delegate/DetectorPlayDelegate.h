@@ -16,4 +16,10 @@
 
 - (void)onPrepared:(NSInteger) frame;
 
+//播放完成
+- (void)onComplete;
+
+//播放出错
+- (void)onError:(NSString*)info;
+
 @end
